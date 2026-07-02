@@ -28,6 +28,15 @@ jobs:
         fi
         bash scripts/env-checker.sh
 
+    - name: Make scripts executable
+      run: chmod +x scripts/telegram.sh
+
+    - name: Run Telegram Script
+      env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      run: ./telegram.sh
+
   build:
     name: build
     runs-on: self-hosted
