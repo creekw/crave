@@ -1,0 +1,39 @@
+name: Crave Builder
+on:
+  workflow_dispatch:
+    inputs:
+      CLEAD_BUILD:
+        description: 'Build with a clean workspace?'
+        required: true
+        default: 'no'
+        type: choice
+        options:
+        - 'yes'
+        - 'no'
+
+jobs:
+  prepare:
+    name: prepare
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check-out
+      uses: actions/checkout@v4
+
+    - name: Check Credentials
+      run: |
+        if [[ -z "${{ secrets.CRAVE_TOKEN }}" || -z "${{ secrets.CRAVE_USERNAME }}" ]]; then
+          echo "Crave Credentials Not Configured! Exiting..."
+          exit 1
+        fi
+        bash scripts/env-checker.sh
+
+  build:
+    name: build
+    runs-on: self-hosted
+    concurrency:
+      group: ${{ github.repository_owner }}
+    steps:
+
+    - name: Echo
+      run: echo 'Hello from crave!'
