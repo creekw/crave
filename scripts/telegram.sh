@@ -66,7 +66,7 @@ CONTENT_TEXT=$(cat "$1")
 echo "Sending Telegram message..."
 RESPONSE=$(curl -s -X POST "${API_URL}/sendMessage" \
   -d chat_id="${TELEGRAM_CHAT_ID}" \
-  --data-url-encode text="$CONTENT_TEXT")
+  --data-urlencode text="$CONTENT_TEXT")
 
 MESSAGE_ID=$(echo "$RESPONSE" | jq -r '.result.message_id')
 
