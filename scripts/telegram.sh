@@ -8,7 +8,7 @@ fi
 
 API_URL="https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}"
 
-if [ "$1" == "EDIT" ] then
+if [ "$1" == "EDIT" ]; then
   MESSAGE_ID="$2"
   CONTENT="$3"
 
@@ -33,18 +33,17 @@ if [ "$1" == "EDIT" ] then
   RESPONSE=$(curl -s -X POST "${API_URL}/editMessageText" \
     -d chat_id="${TELEGRAM_CHAT_ID}" \
     -d message_id="${MESSAGE_ID}" \
-    -d text="$CONTENT_TEXT")
+    --data-urlencode text="$CONTENT_TEXT")
 
   if [[ $(echo "$RESPONSE" | jq '.ok') == "true" ]];
   then
     echo "Message edited successfully."
+    exit 0
   else
     echo "Failed to edit message. API Response:"
     echo "$RESPONSE"
     exit 1
   fi
-
-  exit 0
 fi
 
 
@@ -67,9 +66,9 @@ CONTENT_TEXT=$(cat "$1")
 echo "Sending Telegram message..."
 RESPONSE=$(curl -s -X POST "${API_URL}/sendMessage" \
   -d chat_id="${TELEGRAM_CHAT_ID}" \
-  -d text="$CONTENT_TEXT")
+  --data-url-encode text="$CONTENT_TEXT")
 
-MESSAGE_ID=$(echo "$RESPONSE" | jq '.result.message_id')
+MESSAGE_ID=$(echo "$RESPONSE" | jq -r '.result.message_id')
 
 echo "MESSAGE_ID=$MESSAGE_ID" >> "$GITHUB_OUTPUT"
 
