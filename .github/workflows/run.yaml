@@ -32,12 +32,19 @@ jobs:
       run: chmod +x scripts/telegram.sh
 
     - name: Run Telegram Script
+      id: msg_1
       env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-      run: ./scripts/telegram.sh
+      run: |
+        echo "
+        hello, ${{ github.actor }} has triggered a build for the repository ${{ github.repository }}.
+        " >> content.txt
+        ./scripts/telegram.sh content.txt
+
   build:
     name: build
+    needs: prepare
     runs-on: self-hosted
     concurrency:
       group: ${{ github.repository_owner }}
