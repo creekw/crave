@@ -16,7 +16,7 @@ jobs:
     name: prepare
     runs-on: ubuntu-latest
     outputs:
-      MESSAGE_ID: ${{ steps.msg_1.outputs.MESSAGE_ID }}
+      message_id: ${{ steps.msg_1.outputs.MESSAGE_ID }}
 
     steps:
     - name: Check-out
@@ -66,8 +66,8 @@ jobs:
         Device: ${{ steps.vars.outputs.DEVICE }}
         Build Type: ${{ steps.vars.outputs.BUILD_TYPE }}
         Clean Build: ${{ steps.build_vars.outputs.CLEAD_BUILD }}
-        " >> content.txt
-        ./scripts/telegram.sh EDIT ${{outputs.MESSAGGE_ID}} content.txt
+        " > content.txt
+        ./scripts/telegram.sh EDIT ${{ steps.msg_1.outputs.MESSAGE_ID }} content.txt
 
   build:
     name: build
