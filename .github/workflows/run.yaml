@@ -15,6 +15,8 @@ jobs:
   prepare:
     name: prepare
     runs-on: ubuntu-latest
+    outputs:
+      MESSAGE_ID: ${{ steps.msg_1.outputs.MESSAGE_ID }}
 
     steps:
     - name: Check-out
@@ -38,9 +40,34 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
       run: |
         echo "
-        hello, ${{ github.actor }} has triggered a build for the repository ${{ github.repository }}.
+        ${{ github.actor }} has triggered a build.
         " >> content.txt
         ./scripts/telegram.sh content.txt
+
+    - name: Set Project Variables
+      id: vars
+      run: |
+        echo "DEVICE=creek" >> $GITHUB_OUTPUT
+        echo "BUILD_TYPE=user" >> $GITHUB_OUTPUT
+
+    - name: Set Build Variables
+      id: build_vars
+      run: |
+        echo "CLEAD_BUILD=${{ github.event.inputs.CLEAD_BUILD }}" >> $GITHUB_OUTPUT
+
+    - name: Telegram Build Start Message
+      id: msg_2
+      env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      run: |
+        echo "
+        Build started for ${{ github.actor }}.
+        Device: ${{ steps.vars.outputs.DEVICE }}
+        Build Type: ${{ steps.vars.outputs.BUILD_TYPE }}
+        Clean Build: ${{ steps.build_vars.outputs.CLEAD_BUILD }}
+        " >> content.txt
+        ./scripts/telegram.sh EDIT ${{outputs.MESSAGGE_ID}} content.txt
 
   build:
     name: build
